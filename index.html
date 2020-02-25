@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Lottery</title>
+    <script language="javascript">
+        const MAX_NUMS   = 6;
+        var luckyBall;
+        var randomArray = [];
+        var randomNoLucky = [];
+        var unparsedNums;
+        var nums = [];
+        var matches = 0;
+        var luckyballValue = false;
+        function readInput() 
+        {
+            unparsedNums = document.getElementById("nums").value;
+            nums = unparsedNums.split(' ');
+            luckyBall = document.getElementById("luckyBall").value;
+            // console.log(nums + " " + luckyBall);
+
+            for (i = 0; i < MAX_NUMS - 1; i++) {
+                randomArray[i] = Math.floor(Math.random() * (48 - 1 + 1)) + 1;
+                // console.log(randomArray[i]);
+            }
+            for (var i = 0; i < MAX_NUMS - 1; i++) {
+                for (var j = 0; j < MAX_NUMS - 1; j++) {
+                    while ((randomArray[i] == randomArray[j]) && (i != j)) {
+                        randomArray[i] = Math.floor(Math.random() * (48 - 1 + 1)) + 1;
+                    }
+                }
+            }
+            randomArray[5] = Math.floor(Math.random() * (18 - 1 + 1)) + 1;
+            document.write("<p>The unsorted random numbers are: </p>");
+            for (var i = 0; i < MAX_NUMS; i++) {
+                document.write(randomArray[i] + " ");
+            }
+            for (var i = 0; i < 5; i++) {
+                randomNoLucky[i] = randomArray[i];
+            }
+            randomNoLucky.sort(function(a, b){return a - b});
+            for (var i = 0; i < MAX_NUMS - 1; i++) {
+                randomArray[i] = randomNoLucky[i];
+            }
+            document.write("<p>The sorted random numbers are: </p>")
+            for (var i = 0; i < MAX_NUMS; i++) {
+                document.write(randomArray[i] + " ");
+            }
+            // randomArray[0] = 1;
+            // randomArray[1] = 2;
+            // randomArray[2] = 3;
+            // randomArray[3] = 4;
+            // randomArray[4] = 5;
+            // randomArray[5] = 6;
+            matches = findMatches(nums, randomArray);
+            // console.log("Num matches: " + matches);
+            if (randomArray[5] == luckyBall) {
+                luckyballValue = true;
+            }
+            var payout = calculatePayout(matches, luckyballValue);
+            document.write("<p>Your numbers were: " + nums[0] + " " + nums[1] + " " + nums[2] + 
+                            " " + nums[3] + " " + nums[4] + " " + luckyBall + "</p>");
+            if (payout == 25000) {
+                document.write("<p>Congratulations! Your payout is $" + payout + " a YEAR for LIFE!</p>");
+            } else if (payout == 7000) {
+                document.write("<p>Congratulations! Your payout is $" + payout + " a WEEK for LIFE</p>");
+            } else if(payout != 0) {
+                document.write("<p>Congratulations! Your payout is $" + payout + "!</p>");
+            } else {
+                document.write("<p>Sorry, you didn't win any this time.</p>");
+            }
+        }
+
+        function findMatches(nums, randomNums)
+        {
+            var matches = 0;
+            for (var i = 0; i < nums.length; i++) {
+                for (var j = 0; j < randomNums.length - 1; j++) {
+                    if (nums[i] == randomNums[j]) {
+                        matches++;
+                    }
+                }
+            }
+            return matches;
+        }
+
+        function calculatePayout(numMatches, lucky) 
+        {
+            if ((numMatches == 0 && lucky == false) || (numMatches == 1 && lucky == false)) {
+                return 0;
+            } else if (numMatches == 0 && lucky == true) {
+                return 4;
+            } else if (numMatches == 1 && lucky == true) {
+                return 6;
+            } else if (numMatches == 2 && lucky == false) {
+                return 3;
+            } else if (numMatches == 2 && lucky == true) {
+                return 25;
+            } else if (numMatches == 3 && lucky == false) {
+                return 20;
+            } else if (numMatches == 3 && lucky == true) {
+                return 150;
+            } else if (numMatches == 4 && lucky == false) {
+                return 200;
+            } else if (numMatches == 4 && lucky == true) {
+                return 5000;
+            } else if (numMatches == 5 && lucky == false) {
+                return 25000;
+            } else if (numMatches == 5 && lucky == true) {
+                return 7000;
+            } else {
+                return 0;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1 style="text-align: center">Welcome to the Lottery</h1>
+    <form>
+        Enter the 5 numbers between 1 and 48 you wish to pick here: &nbsp;&nbsp;
+        <input type="text" id="nums" name="nums">
+        <br>
+        <br>
+        Enter your Lucky Ball number (between 1 and 18) here: &nbsp;&nbsp;
+        <input type="text" id="luckyBall" name="luckyBall">
+    </form>
+    <button type="submit" onclick="readInput()">Submit numbers</button>
+</body>
+</html>
